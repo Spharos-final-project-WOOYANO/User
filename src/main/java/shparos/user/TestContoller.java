@@ -12,4 +12,8 @@ public class TestContoller {
     public String testMetmod(){
         return "User Service";
     }
+    @GetMapping("/jenkins")
+    public String jenkinsTestMethod(){
+        return "This is Jenkins Test Method!";
+    }
 }
