@@ -89,11 +89,11 @@ public class UserController {
     /*
         로그인
      */
-//    @Operation(summary = "로그인", description = "로그인", tags = { "User" })
-//    @PostMapping("/login")
-//    public ResponseEntity<String> loginIn() {
-//
-//        return new ResponseEntity<>("로그인성공", HttpStatus.OK);
-//    }
+    @Operation(summary = "로그인", description = "로그인", tags = { "User" })
+    @PostMapping("/login")
+    public ResponseEntity<String> loginIn() {
+
+        return new ResponseEntity<>("로그인성공", HttpStatus.OK);
+    }
 
 }
