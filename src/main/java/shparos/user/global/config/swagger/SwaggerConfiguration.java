@@ -1,4 +1,4 @@
-package shparos.user.global.config;
+package shparos.user.global.config.swagger;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import lombok.RequiredArgsConstructor;

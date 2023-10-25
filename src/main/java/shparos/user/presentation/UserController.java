@@ -53,6 +53,16 @@ public class UserController {
     /*
         이메일 코드 확인
      */
+    @Operation(summary = "이메일 코드 확인",
+            description = "이메일 코드가 유효한지 확인",
+            tags = { "User SignUp" })
+    @GetMapping("/certnum/check")
+    public ResponseEntity<Boolean> certifyEmailCode(@RequestParam("email") String email,
+                                                    @RequestParam("code") String code) {
+        Boolean checkResult = emailService.certifyEmailCode(email, code);
+        return new ResponseEntity<>(checkResult, HttpStatus.OK);
+    }
+
 
     /*
         회원가입시 닉네임 중복확인
@@ -75,5 +85,15 @@ public class UserController {
         UserSignUpOut userSignUpOut = userService.join(userSignUpIn);
         return new ResponseEntity<>(userSignUpOut, HttpStatus.OK);
     }
+
+    /*
+        로그인
+     */
+//    @Operation(summary = "로그인", description = "로그인", tags = { "User" })
+//    @PostMapping("/login")
+//    public ResponseEntity<String> loginIn() {
+//
+//        return new ResponseEntity<>("로그인성공", HttpStatus.OK);
+//    }
 
 }

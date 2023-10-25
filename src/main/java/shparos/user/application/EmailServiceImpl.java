@@ -2,24 +2,33 @@ package shparos.user.application;
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import shparos.user.global.config.redis.RedisUtil;
 
 import java.util.Random;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
+    private final RedisUtil redisUtil;
 
+    // 회원가입 이메일 전송
     @Override
     public void sendCheckMail(String name, String email) {
 
+        // 이미 이메일이 Redis에 등록되어 있는 경우는 삭제
+        if (redisUtil.existData(email)) {
+            redisUtil.deleteData(email);
+        }
+
         // 랜덤 숫자 4자리 설정
         Random random = new Random();
-        int keyCode = random.nextInt(10000)+1000;
+        String authCode = Integer.toString(random.nextInt(9000)+1000);
 
         // 메일 작성
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -43,7 +52,7 @@ public class EmailServiceImpl implements EmailService {
                             "      아래 <b style=\"color: {$point_color};\">'메일 인증 번호'</b>를 입력하여 메일인증을 완료해 주세요.<br />\n" +
                             "      감사합니다.<br/><br/>" +
                             "   </p>\n" +
-                            "   <b style=\" font-size : 40px ; color: {$point_color};\">메일 인증 번호 : "+keyCode+"</b>" +
+                            "   <b style=\" font-size : 40px ; color: {$point_color};\">메일 인증 번호 : "+authCode+"</b>" +
                             "   <br/><br/><br/></p>\n" +
                             "   <div style=\"border-top: 1px solid #DDD; padding: 5px;\">\n" +
                             "      <p style=\"font-size: 13px; line-height: 21px; color: #555;\">\n" +
@@ -55,6 +64,8 @@ public class EmailServiceImpl implements EmailService {
             mimeMessageHelper.setFrom("so6918@naver.com");
             mimeMessageHelper.setTo(email);
 
+            redisUtil.setDataExpire(email, authCode, 180); // 유효시간 3분
+
             javaMailSender.send(mimeMessage);
 
 //            logger.info("MailServiceImpl.sendMail() :: SUCCESS");
@@ -63,5 +74,15 @@ public class EmailServiceImpl implements EmailService {
             e.printStackTrace();
         }
 
+    }
+
+    // 회원가입 이메일 코드 확인
+    @Override
+    public Boolean certifyEmailCode(String email, String code) {
+        String codeFoundByEmail = redisUtil.getData(email);
+        if (codeFoundByEmail == null) {
+            return false;
+        }
+        return codeFoundByEmail.equals(code);
     }
 }
