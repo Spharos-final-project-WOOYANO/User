@@ -18,16 +18,16 @@ pipeline {
         stage('DockerSize'){
             steps {
                 sh '''
-                    docker stop User-Service || true
-                    docker rm User-Service || true
-                    docker rmi User-Service-Img || true
-                    docker build -t User-Service-Img:latest .
+                    docker stop user-service || true
+                    docker rm user-service || true
+                    docker rmi user-service-img || true
+                    docker build -t user-service-img:latest .
                 '''
             }
         }
         stage('Deploy'){
             steps{
-                sh 'docker run -d --name User-Service -p 8080:8000 User-Service-Img'
+                sh 'docker run -d --name user-service -p 8003:8000 user-service-img'
             }
         }
     }
