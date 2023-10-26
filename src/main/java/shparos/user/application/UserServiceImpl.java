@@ -2,12 +2,19 @@ package shparos.user.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import shparos.user.domain.Address;
 import shparos.user.domain.User;
+import shparos.user.global.config.security.JwtTokenProvider;
+import shparos.user.global.exception.CustomException;
+import shparos.user.global.exception.ResponseCode;
 import shparos.user.infrastructure.AddressRepository;
 import shparos.user.infrastructure.UserRepository;
+import shparos.user.vo.UserLoginIn;
+import shparos.user.vo.UserLoginOut;
 import shparos.user.vo.UserSignUpIn;
 import shparos.user.vo.UserSignUpOut;
 
@@ -20,6 +27,8 @@ public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // 이메일 중복 체크
     @Override
@@ -51,6 +60,7 @@ public class UserServiceImpl implements UserService{
         return Boolean.FALSE;
     }
 
+    // 회원가입
     @Override
     public UserSignUpOut join(UserSignUpIn userSignUpIn) {
 
@@ -86,6 +96,40 @@ public class UserServiceImpl implements UserService{
                 .phone(user.getPhone())
                 .localAddress(address.getLocalAddress())
                 .extraAddress(address.getExtraAddress())
+                .build();
+    }
+
+    // 로그인
+    @Override
+    public UserLoginOut login(UserLoginIn userLoginIn) {
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        userLoginIn.getEmail(),
+                        userLoginIn.getPassword()
+                )
+        );
+
+        // 유저 확인
+        User user = userRepository.findByEmail(userLoginIn.getEmail())
+                .orElseThrow(() -> new CustomException(ResponseCode.LOGIN_FAIL));
+
+        // 유저 상태 확인
+        if(user.getStatus() == 1) {
+            // 탈퇴 유저인 경우
+            throw new CustomException(ResponseCode.WITHDRAW_USER);
+        } else if(user.getStatus() == 2) {
+            // 휴면 유저인 경우
+            throw new CustomException(ResponseCode.DORMANT_USER);
+        }
+
+        // 토큰발급
+        String accessToken = jwtTokenProvider.generateToken(user);
+        // 리프레시 토큰 발급 TODO
+//        String refreshToken = jwtTokenProvider.generateRefreshToken(user);
+
+        return UserLoginOut.builder()
+                .token(accessToken)
                 .build();
     }
 }

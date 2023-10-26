@@ -5,9 +5,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import shparos.user.application.EmailService;
 import shparos.user.application.UserService;
+import shparos.user.vo.UserLoginIn;
+import shparos.user.vo.UserLoginOut;
 import shparos.user.vo.UserSignUpIn;
 import shparos.user.vo.UserSignUpOut;
 
@@ -21,6 +24,7 @@ public class UserController {
 
     private final UserService userService;
     private final EmailService emailService;
+    private final AuthenticationManager authenticationManager;
 
     /*
         회원가입시 이메일 중복체크
@@ -91,9 +95,10 @@ public class UserController {
      */
     @Operation(summary = "로그인", description = "로그인", tags = { "User" })
     @PostMapping("/login")
-    public ResponseEntity<String> loginIn() {
+    public ResponseEntity<UserLoginOut> loginIn(@RequestBody UserLoginIn userLoginIn) {
 
-        return new ResponseEntity<>("로그인성공", HttpStatus.OK);
+        UserLoginOut userLoginOut = userService.login(userLoginIn);
+        return new ResponseEntity<>(userLoginOut, HttpStatus.OK);
     }
 
 }
