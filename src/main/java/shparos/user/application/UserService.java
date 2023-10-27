@@ -1,10 +1,7 @@
 package shparos.user.application;
 
 import shparos.user.dto.UserSignUpDto;
-import shparos.user.vo.UserLoginIn;
-import shparos.user.vo.UserLoginOut;
-import shparos.user.vo.UserSignUpIn;
-import shparos.user.vo.UserSignUpOut;
+import shparos.user.vo.*;
 
 public interface UserService {
 
@@ -16,5 +13,9 @@ public interface UserService {
     UserSignUpOut join(UserSignUpIn userSignUpIn);
     // 로그인
     UserLoginOut login(UserLoginIn userLoginIn);
+    // 아이디(이메일) 찾기
+    String findEmail(String username, String phone);
+    // 비밀번호 변경
+    void modifyPassword(UserChangePasswordIn userChangePasswordIn);
 
 }

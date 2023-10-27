@@ -40,7 +40,9 @@ public class SecurityConfiguration {
                                         "/api/v1/users/email/auth",
                                         "/api/v1/users/certnum/check",
                                         "/api/v1/users/nickname/check",
-
+                                        "/api/v1/users/email/find",
+                                        "/api/v1/users/email/password/auth",
+                                        "/api/v1/users/password",
 //                                        "/api/v1/user/join/cert",
 //                                        "/api/v1/member/findPw",
 //                                        "/api/v1/member/findIdPw",

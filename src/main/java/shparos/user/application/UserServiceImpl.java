@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import shparos.user.domain.Address;
 import shparos.user.domain.User;
 import shparos.user.global.config.security.JwtTokenProvider;
@@ -13,10 +14,7 @@ import shparos.user.global.exception.CustomException;
 import shparos.user.global.exception.ResponseCode;
 import shparos.user.infrastructure.AddressRepository;
 import shparos.user.infrastructure.UserRepository;
-import shparos.user.vo.UserLoginIn;
-import shparos.user.vo.UserLoginOut;
-import shparos.user.vo.UserSignUpIn;
-import shparos.user.vo.UserSignUpOut;
+import shparos.user.vo.*;
 
 import java.util.Optional;
 
@@ -131,5 +129,29 @@ public class UserServiceImpl implements UserService{
         return UserLoginOut.builder()
                 .token(accessToken)
                 .build();
+    }
+
+    // 아이디(이메일) 찾기
+    @Override
+    public String findEmail(String username, String phone) {
+
+        // 유저 이름과 휴대폰 번호로 유저정보 찾기
+        User user = userRepository.findByUsernameAndPhone(username, phone)
+                .orElseThrow(() -> new CustomException(ResponseCode.NOT_EXISTS_USER));
+
+        return user.getEmail();
+    }
+
+    // 비밀번호 변경
+    @Override
+    @Transactional
+    public void modifyPassword(UserChangePasswordIn userChangePasswordIn) {
+
+        // 비밀번호를 변경할 유저 확인
+        User user = userRepository.findByEmail(userChangePasswordIn.getEmail())
+                .orElseThrow(() -> new CustomException(ResponseCode.CANNOT_FIND_USER));
+
+        // 비밀번호 변경
+        user.setPassword(new BCryptPasswordEncoder().encode(userChangePasswordIn.getPassword()));
     }
 }

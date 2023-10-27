@@ -37,6 +37,8 @@ public class User extends BaseEntity implements UserDetails  {
     @Column(nullable = false, name = "status", columnDefinition = "tinyint default 0")
     private Integer status;
 
+    public void setPassword(String password) { this.password = password; }
+
 
     // 시큐리티 관련
     @Override
