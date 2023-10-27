@@ -141,4 +141,9 @@ public class UserController {
         return new ResponseEntity<>("비밀번호 변경 완료", HttpStatus.OK);
     }
 
+    @GetMapping("/test")
+    public String testMethod(){
+        return "test Method";
+    }
+
 }
