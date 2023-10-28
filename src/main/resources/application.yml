@@ -1,11 +1,10 @@
 server:
   port: 0
-
 spring:
   application:
     name: user-service
   profiles:
-    default: local
+    default: secret
 
 springdoc:
   swagger-ui:
@@ -21,13 +20,5 @@ springdoc:
   default-produces-media-type: application/json
   paths-to-match:
     - /api/v1/**
-    -
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+

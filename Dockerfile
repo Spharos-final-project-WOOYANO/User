@@ -1,3 +1,3 @@
 FROM openjdk:17-alpine
-COPY ${JAR_FILE} app.jar
-CMD ["java", "-jar", "app.jar"]
+COPY  build/libs/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
