@@ -1,5 +1,6 @@
 package shparos.user.application;
 
+import shparos.user.domain.User;
 import shparos.user.dto.UserSignUpDto;
 import shparos.user.vo.*;
 
@@ -17,5 +18,7 @@ public interface UserService {
     String findEmail(String username, String phone);
     // 비밀번호 변경
     void modifyPassword(UserChangePasswordIn userChangePasswordIn);
+    // 토큰속 이메일로 유저정보 찾기
+    User getUserFromToken(String token);
 
 }

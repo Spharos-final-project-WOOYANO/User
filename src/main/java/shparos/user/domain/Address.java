@@ -29,4 +29,10 @@ public class Address {
     @Column(nullable = false, name = "local_code")
     private Integer localCode;
 
+    public void setDefaultAddress(Boolean defaultAddress) {
+        this.defaultAddress = defaultAddress;
+    }
+
+
+
 }
