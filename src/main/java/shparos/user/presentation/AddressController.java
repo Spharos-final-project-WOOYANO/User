@@ -9,12 +9,16 @@ import org.springframework.web.bind.annotation.*;
 import shparos.user.application.AddressService;
 import shparos.user.application.UserService;
 import shparos.user.domain.User;
+import shparos.user.dto.AddressModifyDto;
 import shparos.user.dto.AddressRegisterDto;
+import shparos.user.vo.AddressDefaultOut;
+import shparos.user.vo.AddressModifyIn;
 import shparos.user.vo.AddressOut;
 import shparos.user.vo.AddressRegisterIn;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -67,14 +71,53 @@ public class AddressController {
     /*
         주소수정
      */
+    @Operation(summary = "주소수정", description = "등록되어있는 주소를 수정", tags = { "Address" })
+    @PutMapping("/address")
+    public ResponseEntity<String> modify(@RequestHeader("Authorization") String token,
+                                         @RequestBody AddressModifyIn addressModifyIn) {
+
+        // 토큰에서 유저정보 취득
+        User user = userService.getUserFromToken(token);
+
+        // 주소 수정
+        AddressModifyDto addressModifyDto = AddressModifyDto.builder()
+                .addressId(addressModifyIn.getAddressId())
+                .user(user)
+                .localAddress(addressModifyIn.getLocalAddress())
+                .extraAddress(addressModifyIn.getExtraAddress())
+                .defaultAddress(addressModifyIn.getDefaultAddress())
+                .localCode(addressModifyIn.getLocalCode())
+                .build();
+        addressService.modifyAddress(addressModifyDto);
+        return new ResponseEntity<>("주소수정", HttpStatus.OK);
+    }
 
     /*
         주소삭제
      */
+    @Operation(summary = "주소삭제", description = "해당하는 주소를 삭제, 단 대표주소의 경우 삭제 불가", tags = { "Address" })
+    @DeleteMapping("/address/{addressId}")
+    public ResponseEntity<String> deleteAddress(@RequestHeader("Authorization") String token,
+                                                @PathVariable("addressId") Long addressId) {
+
+        // 토큰에서 유저정보 취득
+        User user = userService.getUserFromToken(token);
+
+        // 주소 삭제
+        addressService.deleteAddress(addressId);
+        return new ResponseEntity<>("주소삭제", HttpStatus.OK);
+    }
 
     /*
-        대표주소변경
+        대표주소 조회
      */
+    @Operation(summary = "대표주소 조회", description = "대표주소로 설정된 주소를 조회", tags = { "Address" })
+    @GetMapping("/address/default")
+    public ResponseEntity<AddressDefaultOut> getDefaultAddress(@RequestHeader("Authorization") String token) {
 
-
+        // 토큰에서 유저정보 취득
+        User user = userService.getUserFromToken(token);
+        AddressDefaultOut addressDefaultOut = addressService.getDefaultAddress(user);
+        return new ResponseEntity<>(addressDefaultOut, HttpStatus.OK);
+    }
 }
