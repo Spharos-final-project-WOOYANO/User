@@ -12,7 +12,7 @@ import shparos.user.application.UserService;
 import shparos.user.vo.*;
 
 
-//@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
