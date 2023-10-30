@@ -29,4 +29,18 @@ public class Address {
     @Column(nullable = false, name = "local_code")
     private Integer localCode;
 
+    public void setDefaultAddress(Boolean defaultAddress) {
+        this.defaultAddress = defaultAddress;
+    }
+
+    // 주소 수정
+    public void update(String localAddress, String extraAddress, Boolean defaultAddress, Integer localCode) {
+        this.localAddress = localAddress;
+        this.extraAddress = extraAddress;
+        this.defaultAddress = defaultAddress;
+        this.localCode = localCode;
+    }
+
+
+
 }
