@@ -16,6 +16,7 @@ import java.util.List;
 
 
 @EnableWebSecurity
+@Configuration
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
