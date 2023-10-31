@@ -15,6 +15,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import java.util.List;
 
 
+@Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
@@ -55,6 +56,7 @@ public class SecurityConfiguration {
 //                                        "/api/v1/user/oauth",
 
                                         // swagger
+                                        "/swagger-ui.html",
                                         "/swagger-ui/**",
                                         "/swagger-resources/**",
                                         "/api-docs/**") // "/api/v1/auth/**" 패턴에 일치하는 요청에 대해

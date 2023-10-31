@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService{
 
         return UserSignUpOut.builder()
                 .email(user.getEmail())
-                .username(user.getUsername())
+                .username(user.getName())
                 .nickname(user.getNickname())
                 .phone(user.getPhone())
                 .localAddress(address.getLocalAddress())
