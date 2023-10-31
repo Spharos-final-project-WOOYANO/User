@@ -37,6 +37,9 @@ public class User extends BaseEntity implements UserDetails  {
     @Column(nullable = false, name = "status", columnDefinition = "tinyint default 0")
     private Integer status;
 
+    public String getName() {
+        return username;
+    }
     public void setPassword(String password) { this.password = password; }
 
 
