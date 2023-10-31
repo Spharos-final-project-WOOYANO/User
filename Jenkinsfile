@@ -12,7 +12,7 @@ pipeline {
                     sh '''
                         pwd
                         chmod +x ./gradlew
-                        ./gradlew build -x test excludeFile='application.yml'
+                        ./gradlew build
                     '''
                     
                 }
