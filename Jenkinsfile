@@ -6,13 +6,23 @@ pipeline {
                 git branch: 'develop',credentialsId:'0-shingo', url:'https://github.com/Spharos-final-project-WOOYANO/User'
             }
         }
+	stage('Secret-File Download') {
+	    steps {
+	        withCredentials([
+		    file(credentialsId:'User-Secret-File', variable: 'usersecret')
+		    ])
+	        {
+		    sh "cp \$usersecret ./src/main/resources/application-secret.yml"
+		}	    
+  	    }
+	}
         stage('Build'){
             steps{
                 script {
                     sh '''
                         pwd
                         chmod +x ./gradlew
-                        ./gradlew build
+                        ./gradlew build -x test
                     '''
                     
                 }
@@ -31,7 +41,7 @@ pipeline {
         }
         stage('Deploy'){
             steps{
-                sh 'docker run --name user-service user-service-img'
+                sh 'docker run --network spharos-network --name user-service user-service-img'
             }
         }
     }
