@@ -9,10 +9,10 @@ pipeline {
 	stage('Secret-File Download') {
 	    steps {
 	        withCredentials([
-		    file(credentialsId:'User-Secret-File', variable: 'usersecret')
+		    file(credentialsId:'Wooyano-Secret-File', variable: 'secret')
 		    ])
 	        {
-		    sh "cp \$usersecret ./src/main/resources/application-secret.yml"
+		    sh "cp \$secret ./src/main/resources/application-secret.yml"
 		}	    
   	    }
 	}
