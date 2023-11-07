@@ -72,9 +72,9 @@ public class UserController {
      */
     @Operation(summary = "로그인", description = "로그인", tags = { "User Login" })
     @PostMapping("/login")
-    public ResponseEntity<UserLoginOut> loginIn(@RequestBody UserLoginIn userLoginIn) {
-        UserLoginOut userLoginOut = userService.login(userLoginIn);
-        return new ResponseEntity<>(userLoginOut, HttpStatus.OK);
+    public BaseResponse<?> loginIn(@RequestBody UserLoginRequest userLoginRequest) {
+        UserLoginResponse userLoginResponse = userService.login(userLoginRequest);
+        return new BaseResponse<>(userLoginResponse);
     }
 
     /*

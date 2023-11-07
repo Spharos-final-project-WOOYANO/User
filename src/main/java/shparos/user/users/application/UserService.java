@@ -12,7 +12,7 @@ public interface UserService {
     // 회원가입
     UserSignUpResponse join(UserSignUpRequest userSignUpRequest);
     // 로그인
-    UserLoginOut login(UserLoginIn userLoginIn);
+    UserLoginResponse login(UserLoginRequest userLoginRequest);
     // 아이디(이메일) 찾기
     UserFindEmailResponse findEmail(String username, String phone);
     // 비밀번호 변경

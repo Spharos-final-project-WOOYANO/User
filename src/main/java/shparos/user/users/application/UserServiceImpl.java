@@ -95,14 +95,7 @@ public class UserServiceImpl implements UserService {
 
     // 로그인
     @Override
-    public UserLoginOut login(UserLoginIn userLoginIn) {
-
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        userLoginIn.getEmail(),
-                        userLoginIn.getPassword()
-                )
-        );
+    public UserLoginResponse login(UserLoginRequest userLoginIn) {
 
         // 유저 확인
         User user = userRepository.findByEmail(userLoginIn.getEmail())
@@ -117,12 +110,20 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(ResponseCode.DORMANT_USER);
         }
 
+        // 아이디와 비밀번호 확인
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        userLoginIn.getEmail(),
+                        userLoginIn.getPassword()
+                )
+        );
+
         // 토큰발급
         String accessToken = jwtTokenProvider.generateToken(user);
         // 리프레시 토큰 발급 TODO
 //        String refreshToken = jwtTokenProvider.generateRefreshToken(user);
 
-        return UserLoginOut.builder()
+        return UserLoginResponse.builder()
                 .token(accessToken)
                 .build();
     }
