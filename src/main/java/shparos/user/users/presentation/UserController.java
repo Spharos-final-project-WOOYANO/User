@@ -21,9 +21,9 @@ public class UserController {
     private final UserService userService;
 
     /*
-        이메일 존재 체크
+        이메일 중복 체크
      */
-    @Operation(summary = "이메일 존재 체크",
+    @Operation(summary = "이메일 중복 체크",
             description = "해당 이메일이 데이터베이스에 존재하는지 체크",
             tags = { "User SignUp" })
     @GetMapping("/email/check")
@@ -92,6 +92,24 @@ public class UserController {
                                             @RequestParam("phone") String phone) {
         // 아이디 찾기
         UserFindEmailResponse response = userService.findEmail(username, phone);
+        return new BaseResponse<>(response);
+    }
+
+    /*
+        이름과 이메일로 해당하는 유저가 존재하는지 체크
+     */
+    @Operation(summary = "이름과 이메일로 해당하는 유저가 존재하는지 체크",
+            description = "비밀번호 변경 인증 메일 전송 전 이름과 이메일로 해당하는 유저가 존재하는지 체크",
+            tags = { "User ChangePassword" })
+    @GetMapping("/email/exist/check")
+    public BaseResponse<?> checkExistEmailByNameAndEmail(@RequestParam("username") String username,
+                                                         @RequestParam("email") String email) {
+
+        // 이름과 이메일로 해당하는 유저가 존재하는지 체크
+        Boolean checkResult = userService.checkExistEmailByNameAndEmail(username, email);
+        UserEmailExistCheckResponse response = UserEmailExistCheckResponse.builder()
+                .checkResult(checkResult)
+                .build();
         return new BaseResponse<>(response);
     }
 
