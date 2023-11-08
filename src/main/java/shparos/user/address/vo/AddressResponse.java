@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddressOut {
+public class AddressResponse {
 
     private Long id;
     private String localAddress;

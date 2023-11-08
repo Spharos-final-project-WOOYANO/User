@@ -14,9 +14,10 @@ import shparos.user.address.dto.AddressModifyDto;
 import shparos.user.address.dto.AddressRegisterDto;
 import shparos.user.global.exception.CustomException;
 import shparos.user.address.infrastructure.AddressRepository;
-import shparos.user.address.vo.AddressDefaultOut;
-import shparos.user.address.vo.AddressOut;
+import shparos.user.address.vo.AddressDefaultResponse;
+import shparos.user.address.vo.AddressResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -30,20 +31,29 @@ public class AddressServiceImpl implements AddressService {
 
     // 주소리스트 조회
     @Override
-    public List<AddressOut> getAddressList(User user) {
+    public List<AddressResponse> getAddressList(User user) {
 
-        // 해당하는 유저의 주소 정보 모두 조회
-//        List<Address> addressList = addressRepository.findByUser(user);
-//
-//        return addressList.stream()
-//                .map(address -> AddressOut.builder()
-//                    .id(address.getId())
-//                    .localAddress(address.getLocalAddress())
-//                    .extraAddress(address.getExtraAddress())
-////                    .defaultAddress(address.getDefaultAddress())
-//                    .build())
-//                .toList();
-    return null;
+        // 유저 주소 중간 테이블 조회
+        List<UserAddressList> userAddressList = userAddressListRepository.findByUser(user);
+
+        // 주소 정보가 없는 경우 null은 반환
+        if (userAddressList.isEmpty()) {
+            return null;
+        }
+
+        List<AddressResponse> responseList = new ArrayList<>();
+
+        for(UserAddressList userAddress : userAddressList) {
+            AddressResponse addressResponse = AddressResponse.builder()
+                    .id(userAddress.getAddress().getId())
+                    .localAddress(userAddress.getAddress().getLocalAddress())
+                    .extraAddress(userAddress.getAddress().getExtraAddress())
+                    .defaultAddress(userAddress.getDefaultAddress())
+                    .build();
+            responseList.add(addressResponse);
+        }
+
+    return responseList;
     }
 
     // 주소등록
@@ -86,14 +96,6 @@ public class AddressServiceImpl implements AddressService {
     @Transactional
     public void modifyAddress(AddressModifyDto addressModifyDto) {
 
-        // 대표주소인 경우
-//        if(addressModifyDto.getDefaultAddress()) {
-//            // 기존 대표주소를 false로 갱신
-//            Address defaultAddress = addressRepository.findByUserAndDefaultAddress(addressModifyDto.getUser(), true);
-//            defaultAddress.setDefaultAddress(Boolean.FALSE);
-//            addressRepository.save(defaultAddress);
-//        }
-
         // 수정할 주소를 찾음
         Address modifyAddress = addressRepository.findById(addressModifyDto.getAddressId())
                 .orElseThrow(() -> new CustomException(ResponseCode.CANNOT_FIND_ADDRESS));
@@ -112,34 +114,41 @@ public class AddressServiceImpl implements AddressService {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new CustomException(ResponseCode.CANNOT_FIND_ADDRESS));
 
-        // 삭제할 주소가 대표 주소인 경우 에러
-//        if(address.getDefaultAddress()) {
-//            throw new CustomException(ResponseCode.CANNOT_DELETE_DEFAULT_ADDRESS);
-//        }
+        // 유저 주소 중간테이블 조회
+        UserAddressList userAddressList = userAddressListRepository.findByAddress(address);
 
+        // 삭제할 주소가 대표 주소인 경우 에러
+        if(userAddressList.getDefaultAddress()) {
+            throw new CustomException(ResponseCode.CANNOT_DELETE_DEFAULT_ADDRESS);
+        }
+
+        // 유저 주소 중간테이블 삭제
+        userAddressListRepository.delete(userAddressList);
+
+        // 주소 삭제
         addressRepository.delete(address);
     }
 
     // 대표주소 조회
     @Override
-    public AddressDefaultOut getDefaultAddress(User user) {
+    public AddressDefaultResponse getDefaultAddress(User user) {
 
-        // 대표주소 조회
-//        Address address = addressRepository.findByUserAndDefaultAddress(user, Boolean.TRUE);
+        // 유저 주소 중간 테이블에서 대표주소 조회
+        UserAddressList userAddressList = userAddressListRepository.findByUserAndDefaultAddress(
+                user, Boolean.TRUE);
 
-//        // 주소 정보가 없는 경우 에러
-//        if(address == null) {
-//            throw new CustomException(ResponseCode.CANNOT_FIND_ADDRESS);
-//        }
-//
-//        return AddressDefaultOut.builder()
-//                .id(address.getId())
-//                .localAddress(address.getLocalAddress())
-//                .extraAddress(address.getExtraAddress())
-//                .defaultAddress(address.getDefaultAddress())
-//                .localCode(address.getLocalCode())
-//                .build();
-    return null;
+        // 주소 정보가 없는 경우 에러
+        if(userAddressList == null) {
+            throw new CustomException(ResponseCode.CANNOT_FIND_ADDRESS);
+        }
+
+        return AddressDefaultResponse.builder()
+                .id(userAddressList.getAddress().getId())
+                .localAddress(userAddressList.getAddress().getLocalAddress())
+                .extraAddress(userAddressList.getAddress().getExtraAddress())
+                .defaultAddress(userAddressList.getDefaultAddress())
+                .localCode(userAddressList.getAddress().getLocalCode())
+                .build();
     }
 
 }

@@ -3,12 +3,11 @@ package shparos.user.address.vo;
 import lombok.Getter;
 
 @Getter
-public class AddressModifyIn {
+public class AddressModifyRequest {
 
     private Long addressId;
     private String localAddress;
     private String extraAddress;
-    private Boolean defaultAddress;
     private Integer localCode;
 
 }

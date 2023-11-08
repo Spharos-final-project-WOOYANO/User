@@ -3,7 +3,7 @@ package shparos.user.address.vo;
 import lombok.Getter;
 
 @Getter
-public class AddressRegisterIn {
+public class AddressRegisterRequest {
 
     private String localAddress;
     private String extraAddress;

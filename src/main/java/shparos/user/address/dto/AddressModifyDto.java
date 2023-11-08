@@ -14,7 +14,6 @@ public class AddressModifyDto {
     private User user;
     private String localAddress;
     private String extraAddress;
-    private Boolean defaultAddress;
     private Integer localCode;
 
 }

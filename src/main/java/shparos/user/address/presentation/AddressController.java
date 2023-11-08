@@ -3,18 +3,17 @@ package shparos.user.address.presentation;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shparos.user.address.application.AddressService;
+import shparos.user.global.common.response.BaseResponse;
 import shparos.user.users.application.UserService;
 import shparos.user.users.domain.User;
 import shparos.user.address.dto.AddressModifyDto;
 import shparos.user.address.dto.AddressRegisterDto;
-import shparos.user.address.vo.AddressDefaultOut;
-import shparos.user.address.vo.AddressModifyIn;
-import shparos.user.address.vo.AddressOut;
-import shparos.user.address.vo.AddressRegisterIn;
+import shparos.user.address.vo.AddressDefaultResponse;
+import shparos.user.address.vo.AddressModifyRequest;
+import shparos.user.address.vo.AddressResponse;
+import shparos.user.address.vo.AddressRegisterRequest;
 
 import java.util.List;
 
@@ -33,14 +32,14 @@ public class AddressController {
      */
     @Operation(summary = "주소리스트 조회", description = "등록되어 있는 주소리스트 전체 조회", tags = { "Address" })
     @GetMapping("/address")
-    public ResponseEntity<List<AddressOut>> getAddressList(@RequestHeader("Authorization") String token) {
+    public BaseResponse<?> getAddressList(@RequestHeader("Authorization") String token) {
 
         // 토큰에서 유저정보 취득
         User user = userService.getUserFromToken(token);
 
         // 주소 리스트 조회
-        List<AddressOut> addressOutList = addressService.getAddressList(user);
-        return new ResponseEntity<>(addressOutList, HttpStatus.OK);
+        List<AddressResponse> addressResponseList = addressService.getAddressList(user);
+        return new BaseResponse<>(addressResponseList);
     }
 
     /*
@@ -48,24 +47,23 @@ public class AddressController {
      */
     @Operation(summary = "주소등록", description = "새로운 주소를 등록", tags = { "Address" })
     @PostMapping("/address")
-    public ResponseEntity<String> registerAddress(@RequestHeader("Authorization") String token,
-                                                  @RequestBody AddressRegisterIn addressRegisterIn) {
+    public BaseResponse<?> registerAddress(@RequestHeader("Authorization") String token,
+                                                  @RequestBody AddressRegisterRequest addressRegisterRequest) {
 
         // 토큰에서 유저정보 취득
         User user = userService.getUserFromToken(token);
 
         AddressRegisterDto addressRegisterDto = AddressRegisterDto.builder()
                 .user(user)
-                .localAddress(addressRegisterIn.getLocalAddress())
-                .extraAddress(addressRegisterIn.getExtraAddress())
-                .defaultAddress(addressRegisterIn.getDefaultAddress())
-                .localCode(addressRegisterIn.getLocalCode())
+                .localAddress(addressRegisterRequest.getLocalAddress())
+                .extraAddress(addressRegisterRequest.getExtraAddress())
+                .defaultAddress(addressRegisterRequest.getDefaultAddress())
+                .localCode(addressRegisterRequest.getLocalCode())
                 .build();
-
         // 주소 등록
         addressService.registerAddress(addressRegisterDto);
 
-        return new ResponseEntity<>("주소등록", HttpStatus.OK);
+        return new BaseResponse<>();
     }
 
     /*
@@ -73,31 +71,32 @@ public class AddressController {
      */
     @Operation(summary = "주소수정", description = "등록되어있는 주소를 수정", tags = { "Address" })
     @PutMapping("/address")
-    public ResponseEntity<String> modify(@RequestHeader("Authorization") String token,
-                                         @RequestBody AddressModifyIn addressModifyIn) {
+    public BaseResponse<?> modify(@RequestHeader("Authorization") String token,
+                                         @RequestBody AddressModifyRequest addressModifyRequest) {
 
         // 토큰에서 유저정보 취득
         User user = userService.getUserFromToken(token);
 
         // 주소 수정
         AddressModifyDto addressModifyDto = AddressModifyDto.builder()
-                .addressId(addressModifyIn.getAddressId())
+                .addressId(addressModifyRequest.getAddressId())
                 .user(user)
-                .localAddress(addressModifyIn.getLocalAddress())
-                .extraAddress(addressModifyIn.getExtraAddress())
-                .defaultAddress(addressModifyIn.getDefaultAddress())
-                .localCode(addressModifyIn.getLocalCode())
+                .localAddress(addressModifyRequest.getLocalAddress())
+                .extraAddress(addressModifyRequest.getExtraAddress())
+                .localCode(addressModifyRequest.getLocalCode())
                 .build();
         addressService.modifyAddress(addressModifyDto);
-        return new ResponseEntity<>("주소수정", HttpStatus.OK);
+        return new BaseResponse<>();
     }
 
     /*
         주소삭제
      */
-    @Operation(summary = "주소삭제", description = "해당하는 주소를 삭제, 단 대표주소의 경우 삭제 불가", tags = { "Address" })
+    @Operation(summary = "주소삭제",
+            description = "해당하는 주소를 삭제, 단 대표주소의 경우 삭제 불가",
+            tags = { "Address" })
     @DeleteMapping("/address/{addressId}")
-    public ResponseEntity<String> deleteAddress(@RequestHeader("Authorization") String token,
+    public BaseResponse<?> deleteAddress(@RequestHeader("Authorization") String token,
                                                 @PathVariable("addressId") Long addressId) {
 
         // 토큰에서 유저정보 취득
@@ -105,7 +104,7 @@ public class AddressController {
 
         // 주소 삭제
         addressService.deleteAddress(addressId);
-        return new ResponseEntity<>("주소삭제", HttpStatus.OK);
+        return new BaseResponse<>();
     }
 
     /*
@@ -113,11 +112,11 @@ public class AddressController {
      */
     @Operation(summary = "대표주소 조회", description = "대표주소로 설정된 주소를 조회", tags = { "Address" })
     @GetMapping("/address/default")
-    public ResponseEntity<AddressDefaultOut> getDefaultAddress(@RequestHeader("Authorization") String token) {
+    public BaseResponse<?> getDefaultAddress(@RequestHeader("Authorization") String token) {
 
         // 토큰에서 유저정보 취득
         User user = userService.getUserFromToken(token);
-        AddressDefaultOut addressDefaultOut = addressService.getDefaultAddress(user);
-        return new ResponseEntity<>(addressDefaultOut, HttpStatus.OK);
+        AddressDefaultResponse addressDefaultResponse = addressService.getDefaultAddress(user);
+        return new BaseResponse<>(addressDefaultResponse);
     }
 }
