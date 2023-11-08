@@ -125,6 +125,7 @@ public class UserServiceImpl implements UserService {
 
         return UserLoginResponse.builder()
                 .token(accessToken)
+                .email(user.getEmail())
                 .build();
     }
 
