@@ -112,7 +112,24 @@ public class AddressController {
 
         // 이메일로 유저정보 찾기
         User user = userService.getUserFromEmail(email);
+
+        // 대표주소 조회
         AddressDefaultResponse addressDefaultResponse = addressService.getDefaultAddress(user);
         return new BaseResponse<>(addressDefaultResponse);
+    }
+
+    /*
+        대표주소 변경
+     */
+    @Operation(summary = "대표주소 변경", description = "대표주소를 변경", tags = { "Address" })
+    @PutMapping("/address/default/{addressId}")
+    public BaseResponse<?> modify(@RequestHeader("email") String email, @PathVariable("addressId") Long addressId) {
+
+        // 이메일로 유저정보 찾기
+        User user = userService.getUserFromEmail(email);
+
+        // 대표주소 변경
+        addressService.modifyDefaultAddress(user, addressId);
+        return new BaseResponse<>();
     }
 }

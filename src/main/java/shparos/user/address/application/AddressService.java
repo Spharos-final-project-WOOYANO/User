@@ -26,4 +26,7 @@ public interface AddressService {
     // 대표주소 조회
     AddressDefaultResponse getDefaultAddress(User user);
 
+    // 대표주소 변경
+    void modifyDefaultAddress(User user, Long addressId);
+
 }
