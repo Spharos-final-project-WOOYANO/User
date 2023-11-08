@@ -17,8 +17,8 @@ public interface UserService {
     UserFindEmailResponse findEmail(String username, String phone);
     // 비밀번호 변경
     void modifyPassword(UserChangePasswordRequest userChangePasswordRequest);
-    // 토큰속 이메일로 유저정보 찾기
-    User getUserFromToken(String token);
+    // 이메일로 유저정보 찾기
+    User getUserFromEmail(String email);
     // 이름과 이메일로 해당하는 유저가 존재하는지 체크
     Boolean checkExistEmailByNameAndEmail(String username, String email);
 

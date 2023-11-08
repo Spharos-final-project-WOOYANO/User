@@ -165,11 +165,9 @@ public class UserServiceImpl implements UserService {
         user.setPassword(new BCryptPasswordEncoder().encode(userChangePasswordRequest.getPassword()));
     }
 
-    // 토큰속 이메일로 유저정보 찾기
+    // 이메일로 유저정보 찾기
     @Override
-    public User getUserFromToken(String token) {
-        String email = jwtTokenProvider.getUserId(token.substring(7));
-
+    public User getUserFromEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ResponseCode.CANNOT_FIND_USER));
     }
