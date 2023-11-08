@@ -151,4 +151,22 @@ public class AddressServiceImpl implements AddressService {
                 .build();
     }
 
+    // 대표주소 변경
+    @Override
+    @Transactional
+    public void modifyDefaultAddress(User user, Long addressId) {
+
+        // 기존 대표주소였던 주소를 일반주소로 수정
+        UserAddressList userAddressList = userAddressListRepository.findByUserAndDefaultAddress(user, Boolean.TRUE);
+        userAddressList.setDefaultAddress(Boolean.FALSE);
+
+        // 대표주소를 변경할 주소를 조회
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new CustomException(ResponseCode.CANNOT_FIND_ADDRESS));
+
+        // 대표주소를 변경
+        UserAddressList newDefaultAddress = userAddressListRepository.findByAddress(address);
+        newDefaultAddress.setDefaultAddress(Boolean.TRUE);
+    }
+
 }

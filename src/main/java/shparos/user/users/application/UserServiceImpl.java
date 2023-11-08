@@ -125,6 +125,7 @@ public class UserServiceImpl implements UserService {
 
         return UserLoginResponse.builder()
                 .token(accessToken)
+                .email(user.getEmail())
                 .build();
     }
 
@@ -164,13 +165,33 @@ public class UserServiceImpl implements UserService {
         user.setPassword(new BCryptPasswordEncoder().encode(userChangePasswordRequest.getPassword()));
     }
 
-    // 토큰속 이메일로 유저정보 찾기
+    // 이메일로 유저정보 찾기
     @Override
-    public User getUserFromToken(String token) {
-        String email = jwtTokenProvider.getUserId(token.substring(7));
-
+    public User getUserFromEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ResponseCode.CANNOT_FIND_USER));
+    }
+
+    /*
+        이름과 이메일로 해당하는 유저가 존재하는지 체크
+     */
+    @Override
+    public Boolean checkExistEmailByNameAndEmail(String username, String email) {
+
+        // 이메일로 유저 조회
+        Optional<User> user = userRepository.findByEmail(email);
+
+        // 해당 닉네임이 DB에 존재하지 않거나 유저 상태가 [정상] 이외면 체크 결과를 false로 리턴
+        if(user.isEmpty() || user.get().getStatus() != 0) {
+            return Boolean.FALSE;
+        }
+
+        // 이름이 일치 하지 않으면 체크 결과를 false로 리턴
+        if(!user.get().getName().equals(username)) {
+            return Boolean.FALSE;
+        }
+
+        return Boolean.TRUE;
     }
 
 
