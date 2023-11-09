@@ -14,6 +14,7 @@ import shparos.user.global.common.response.ResponseCode;
 import shparos.user.users.domain.User;
 import shparos.user.global.config.security.JwtTokenProvider;
 import shparos.user.global.exception.CustomException;
+import shparos.user.users.dto.UserPasswordCheckDto;
 import shparos.user.users.infrastructure.UserRepository;
 import shparos.user.users.vo.*;
 
@@ -192,6 +193,21 @@ public class UserServiceImpl implements UserService {
         }
 
         return Boolean.TRUE;
+    }
+
+    // 이메일과 비밀번호로 유저 확인
+    @Override
+    public Boolean checkPassword(UserPasswordCheckDto userPasswordCheckDto) {
+
+        // 유저 확인
+        User user = getUserFromEmail(userPasswordCheckDto.getEmail());
+
+        // 비밀번호 일치 확인
+        if(user.getPassword().equals(new BCryptPasswordEncoder().encode(userPasswordCheckDto.getPassword()))) {
+            return true;
+        }
+
+        return false;
     }
 
 

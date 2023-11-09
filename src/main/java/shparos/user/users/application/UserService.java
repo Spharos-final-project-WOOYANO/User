@@ -1,6 +1,7 @@
 package shparos.user.users.application;
 
 import shparos.user.users.domain.User;
+import shparos.user.users.dto.UserPasswordCheckDto;
 import shparos.user.users.vo.*;
 
 public interface UserService {
@@ -21,5 +22,7 @@ public interface UserService {
     User getUserFromEmail(String email);
     // 이름과 이메일로 해당하는 유저가 존재하는지 체크
     Boolean checkExistEmailByNameAndEmail(String username, String email);
+    // 이메일과 비밀번호로 유저 확인
+    Boolean checkPassword(UserPasswordCheckDto userPasswordCheckDto);
 
 }
