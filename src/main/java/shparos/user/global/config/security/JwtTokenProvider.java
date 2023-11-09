@@ -2,7 +2,6 @@ package shparos.user.global.config.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
+import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.Key;
-import java.util.Date;
 import java.util.Map;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -28,7 +27,7 @@ public class JwtTokenProvider {
     @Value("${JWT.secret-key}")
     private String secretKey;
 
-    @Value("${jwt.expiration-time}")
+    @Value("${JWT.expiration-time}")
     private Long EXPIRATION_TIME;
 
     @Value("${JWT.refresh-expiration-time}")
@@ -47,7 +46,7 @@ public class JwtTokenProvider {
     }
 
     /**
-     * @param userDetails 사용자 정보
+     * @param userDetails 사용자의 세부 정보를 나타낸다.(get~~~를 통해 가져옴)
      * @return 클레임 정보와 사용자 정보를 기반으로 jwt 토큰 생성
      * 클레임 정보, 사용자 ID, 생성 시간, 만료 시간 등을 설정하고, 서명 알고리즘과 서명 키를 사용하여 토큰을 생성합니다.
      * Access TOken 역활
@@ -143,6 +142,7 @@ public class JwtTokenProvider {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
+                .claim("role","USER")
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
