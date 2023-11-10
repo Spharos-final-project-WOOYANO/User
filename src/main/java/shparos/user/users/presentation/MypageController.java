@@ -10,7 +10,6 @@ import shparos.user.users.dto.UserPasswordCheckDto;
 import shparos.user.users.vo.UserPasswordCheckRequest;
 import shparos.user.users.vo.UserPasswordCheckResponse;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 @RequiredArgsConstructor
 @RestController

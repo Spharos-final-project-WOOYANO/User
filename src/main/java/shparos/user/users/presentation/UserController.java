@@ -3,15 +3,12 @@ package shparos.user.users.presentation;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shparos.user.global.common.response.BaseResponse;
 import shparos.user.users.application.UserService;
 import shparos.user.users.vo.*;
 
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
