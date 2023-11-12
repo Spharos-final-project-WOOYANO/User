@@ -49,6 +49,15 @@ public class User extends BaseEntity implements UserDetails  {
         return new User(email, password, birthday, username, nickname, phone, status);
     }
 
+    // 유저 수정
+    public void modifyUser(String birthday, String username, String nickname,
+                           String phone) {
+        this.birthday = birthday;
+        this.username = username;
+        this.nickname = nickname;
+        this.phone = phone;
+    }
+
     public String getName() {
         return username;
     }

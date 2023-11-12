@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,8 @@ import shparos.user.global.common.response.ResponseCode;
 import shparos.user.users.domain.User;
 import shparos.user.global.config.security.JwtTokenProvider;
 import shparos.user.global.exception.CustomException;
+import shparos.user.users.dto.UserModifyDto;
+import shparos.user.users.dto.UserPasswordChangeDto;
 import shparos.user.users.dto.UserPasswordCheckDto;
 import shparos.user.users.infrastructure.UserRepository;
 import shparos.user.users.vo.*;
@@ -26,6 +30,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final AddressService addressService;
+    private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
@@ -156,14 +161,14 @@ public class UserServiceImpl implements UserService {
     // 비밀번호 변경
     @Override
     @Transactional
-    public void modifyPassword(UserChangePasswordRequest userChangePasswordRequest) {
+    public void modifyPassword(UserPasswordChangeDto userPasswordChangeDto) {
 
         // 비밀번호를 변경할 유저 확인
-        User user = userRepository.findByEmail(userChangePasswordRequest.getEmail())
+        User user = userRepository.findByEmail(userPasswordChangeDto.getEmail())
                 .orElseThrow(() -> new CustomException(ResponseCode.CANNOT_FIND_USER));
 
         // 비밀번호 변경
-        user.setPassword(new BCryptPasswordEncoder().encode(userChangePasswordRequest.getPassword()));
+        user.setPassword(new BCryptPasswordEncoder().encode(userPasswordChangeDto.getPassword()));
     }
 
     // 이메일로 유저정보 찾기
@@ -203,11 +208,41 @@ public class UserServiceImpl implements UserService {
         User user = getUserFromEmail(userPasswordCheckDto.getEmail());
 
         // 비밀번호 일치 확인
-        if(user.getPassword().equals(new BCryptPasswordEncoder().encode(userPasswordCheckDto.getPassword()))) {
+        if(new BCryptPasswordEncoder().matches(userPasswordCheckDto.getPassword(),user.getPassword())) {
             return true;
         }
 
         return false;
+    }
+
+    // 회원정보조회
+    @Override
+    public UserInformationResponse getUserInformation(String email) {
+
+        // 유저 확인
+        User user = getUserFromEmail(email);
+        return UserInformationResponse.builder()
+                .email(user.getEmail())
+                .username(user.getName())
+                .birthday(user.getBirthday())
+                .nickname(user.getNickname())
+                .phone(user.getPhone())
+                .build();
+    }
+
+    // 회원정보 수정
+    @Override
+    @Transactional
+    public void modifyUserInformation(UserModifyDto userModifyDto) {
+
+        // 유저 확인
+        User user = getUserFromEmail(userModifyDto.getEmail());
+
+        // 정보를 수정함
+        user.modifyUser(userModifyDto.getBirthday(),
+                userModifyDto.getUsername(),
+                userModifyDto.getNickname(),
+                userModifyDto.getPhone());
     }
 
 
