@@ -4,6 +4,7 @@ import shparos.user.users.domain.User;
 import shparos.user.users.dto.UserModifyDto;
 import shparos.user.users.dto.UserPasswordChangeDto;
 import shparos.user.users.dto.UserPasswordCheckDto;
+import shparos.user.users.dto.UserWithdrawCheckDto;
 import shparos.user.users.vo.*;
 
 public interface UserService {
@@ -30,5 +31,9 @@ public interface UserService {
     UserInformationResponse getUserInformation(String email);
     // 회원정보 수정
     void modifyUserInformation(UserModifyDto userModifyDto);
+    // 회원탈퇴전 회원확인
+    Boolean checkUserBeforeWithdraw(UserWithdrawCheckDto userWithdrawCheckDto);
+    // 회원탈퇴
+    void withdrawUser(String email);
 
 }

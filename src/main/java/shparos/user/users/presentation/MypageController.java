@@ -9,6 +9,7 @@ import shparos.user.users.application.UserService;
 import shparos.user.users.dto.UserModifyDto;
 import shparos.user.users.dto.UserPasswordChangeDto;
 import shparos.user.users.dto.UserPasswordCheckDto;
+import shparos.user.users.dto.UserWithdrawCheckDto;
 import shparos.user.users.vo.*;
 
 @Slf4j
@@ -97,9 +98,37 @@ public class MypageController {
     /*
         회원확인
      */
+    @Operation(summary = "회원확인", description = "회원탈퇴 진행 전 회원확인을 실시", tags = { "User Mypage" })
+    @PostMapping("/withdraw/check")
+    public BaseResponse<?> checkUserBeforeWithdraw(@RequestHeader("email") String email,
+                                                 @RequestBody UserWithdrawCheckRequest request)
+    {
+        // 회원탈퇴 진행 전 회원확인을 실시
+        UserWithdrawCheckDto dto = UserWithdrawCheckDto.builder()
+                .loginEmail(email)
+                .inputEmail(request.getEmail())
+                .password(request.getPassword())
+                .username(request.getUsername())
+                .build();
+
+        Boolean checkResult = userService.checkUserBeforeWithdraw(dto);
+
+        UserWithdrawCheckResponse response = UserWithdrawCheckResponse.builder()
+                .checkResult(checkResult)
+                .build();
+        return new BaseResponse<>(response);
+    }
 
     /*
         회원탈퇴
      */
+    @Operation(summary = "회원탈퇴", description = "회원탈퇴", tags = { "User Mypage" })
+    @PutMapping("/withdraw")
+    public BaseResponse<?> withdrawUser(@RequestHeader("email") String email) {
+
+        // 회원탈퇴
+        userService.withdrawUser(email);
+        return new BaseResponse<>();
+    }
 
 }

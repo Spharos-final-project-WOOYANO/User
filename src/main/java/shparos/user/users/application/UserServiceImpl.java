@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +17,7 @@ import shparos.user.global.exception.CustomException;
 import shparos.user.users.dto.UserModifyDto;
 import shparos.user.users.dto.UserPasswordChangeDto;
 import shparos.user.users.dto.UserPasswordCheckDto;
+import shparos.user.users.dto.UserWithdrawCheckDto;
 import shparos.user.users.infrastructure.UserRepository;
 import shparos.user.users.vo.*;
 
@@ -30,7 +29,6 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final AddressService addressService;
-    private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
@@ -209,10 +207,10 @@ public class UserServiceImpl implements UserService {
 
         // 비밀번호 일치 확인
         if(new BCryptPasswordEncoder().matches(userPasswordCheckDto.getPassword(),user.getPassword())) {
-            return true;
+            return Boolean.TRUE;
         }
 
-        return false;
+        return Boolean.FALSE;
     }
 
     // 회원정보조회
@@ -243,6 +241,43 @@ public class UserServiceImpl implements UserService {
                 userModifyDto.getUsername(),
                 userModifyDto.getNickname(),
                 userModifyDto.getPhone());
+    }
+
+    // 회원탈퇴전 회원확인
+    @Override
+    public Boolean checkUserBeforeWithdraw(UserWithdrawCheckDto dto) {
+
+        // 헤더에 담긴 이메일과 유저가 입력한 이메일이 다른 경우
+        if(!dto.getLoginEmail().equals(dto.getInputEmail())) {
+            throw new CustomException(ResponseCode.CANNOT_FIND_USER);
+        }
+
+        // 유저 확인
+        User user = getUserFromEmail(dto.getLoginEmail());
+
+        // 비밀번호 일치 확인
+        if(!new BCryptPasswordEncoder().matches(dto.getPassword(),user.getPassword())) {
+            return Boolean.FALSE;
+        }
+
+        // 이름 일치 확인
+        if(!user.getName().equals(dto.getUsername())) {
+            return Boolean.FALSE;
+        }
+
+        return Boolean.TRUE;
+    }
+
+    // 회원탈퇴
+    @Override
+    @Transactional
+    public void withdrawUser(String email) {
+
+        // 유저 확인
+        User user = getUserFromEmail(email);
+
+        // 유저 상태를 [탈퇴]로 변경
+        user.setStatus(1);
     }
 
 
