@@ -17,7 +17,6 @@ import shparos.user.address.vo.AddressRegisterRequest;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
