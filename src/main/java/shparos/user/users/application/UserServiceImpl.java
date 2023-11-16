@@ -14,7 +14,10 @@ import shparos.user.global.common.response.ResponseCode;
 import shparos.user.users.domain.User;
 import shparos.user.global.config.security.JwtTokenProvider;
 import shparos.user.global.exception.CustomException;
+import shparos.user.users.dto.UserModifyDto;
+import shparos.user.users.dto.UserPasswordChangeDto;
 import shparos.user.users.dto.UserPasswordCheckDto;
+import shparos.user.users.dto.UserWithdrawCheckDto;
 import shparos.user.users.infrastructure.UserRepository;
 import shparos.user.users.vo.*;
 
@@ -156,14 +159,14 @@ public class UserServiceImpl implements UserService {
     // 비밀번호 변경
     @Override
     @Transactional
-    public void modifyPassword(UserChangePasswordRequest userChangePasswordRequest) {
+    public void modifyPassword(UserPasswordChangeDto userPasswordChangeDto) {
 
         // 비밀번호를 변경할 유저 확인
-        User user = userRepository.findByEmail(userChangePasswordRequest.getEmail())
+        User user = userRepository.findByEmail(userPasswordChangeDto.getEmail())
                 .orElseThrow(() -> new CustomException(ResponseCode.CANNOT_FIND_USER));
 
         // 비밀번호 변경
-        user.setPassword(new BCryptPasswordEncoder().encode(userChangePasswordRequest.getPassword()));
+        user.setPassword(new BCryptPasswordEncoder().encode(userPasswordChangeDto.getPassword()));
     }
 
     // 이메일로 유저정보 찾기
@@ -203,11 +206,78 @@ public class UserServiceImpl implements UserService {
         User user = getUserFromEmail(userPasswordCheckDto.getEmail());
 
         // 비밀번호 일치 확인
-        if(user.getPassword().equals(new BCryptPasswordEncoder().encode(userPasswordCheckDto.getPassword()))) {
-            return true;
+        if(new BCryptPasswordEncoder().matches(userPasswordCheckDto.getPassword(),user.getPassword())) {
+            return Boolean.TRUE;
         }
 
-        return false;
+        return Boolean.FALSE;
+    }
+
+    // 회원정보조회
+    @Override
+    public UserInformationResponse getUserInformation(String email) {
+
+        // 유저 확인
+        User user = getUserFromEmail(email);
+        return UserInformationResponse.builder()
+                .email(user.getEmail())
+                .username(user.getName())
+                .birthday(user.getBirthday())
+                .nickname(user.getNickname())
+                .phone(user.getPhone())
+                .build();
+    }
+
+    // 회원정보 수정
+    @Override
+    @Transactional
+    public void modifyUserInformation(UserModifyDto userModifyDto) {
+
+        // 유저 확인
+        User user = getUserFromEmail(userModifyDto.getEmail());
+
+        // 정보를 수정함
+        user.modifyUser(userModifyDto.getBirthday(),
+                userModifyDto.getUsername(),
+                userModifyDto.getNickname(),
+                userModifyDto.getPhone());
+    }
+
+    // 회원탈퇴전 회원확인
+    @Override
+    public Boolean checkUserBeforeWithdraw(UserWithdrawCheckDto dto) {
+
+        // 헤더에 담긴 이메일과 유저가 입력한 이메일이 다른 경우
+        if(!dto.getLoginEmail().equals(dto.getInputEmail())) {
+            throw new CustomException(ResponseCode.CANNOT_FIND_USER);
+        }
+
+        // 유저 확인
+        User user = getUserFromEmail(dto.getLoginEmail());
+
+        // 비밀번호 일치 확인
+        if(!new BCryptPasswordEncoder().matches(dto.getPassword(),user.getPassword())) {
+            return Boolean.FALSE;
+        }
+
+        // 이름 일치 확인
+        if(!user.getName().equals(dto.getUsername())) {
+            return Boolean.FALSE;
+        }
+
+        return Boolean.TRUE;
+    }
+
+    // 회원탈퇴
+    @Override
+    @Transactional
+    public void withdrawUser(String email) {
+
+        // 유저 확인
+        User user = getUserFromEmail(email);
+
+        // 유저 상태를 [탈퇴]로 변경
+        user.setStatus(1);
     }
 
 
