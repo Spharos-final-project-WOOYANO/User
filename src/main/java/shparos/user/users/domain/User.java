@@ -21,7 +21,7 @@ public class User extends BaseEntity implements UserDetails  {
     private String email;
     @Column(nullable = false, name = "password")
     private String password;
-    @Column(nullable = false, length = 6, name = "birthday")
+    @Column(nullable = false, length = 8, name = "birthday")
     private String birthday;
     @Column(nullable = false, length = 30, name = "username")
     private String username;
@@ -49,10 +49,23 @@ public class User extends BaseEntity implements UserDetails  {
         return new User(email, password, birthday, username, nickname, phone, status);
     }
 
+    // 유저 수정
+    public void modifyUser(String birthday, String username, String nickname,
+                           String phone) {
+        this.birthday = birthday;
+        this.username = username;
+        this.nickname = nickname;
+        this.phone = phone;
+    }
+
     public String getName() {
         return username;
     }
     public void setPassword(String password) { this.password = password; }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
 
     // 시큐리티 관련

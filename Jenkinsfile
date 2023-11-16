@@ -9,10 +9,10 @@ pipeline {
 	stage('Secret-File Download') {
 	    steps {
 	        withCredentials([
-		    file(credentialsId:'User-Secret-File', variable: 'userSecret')
+		    file(credentialsId:'Jwt-Secret-File', variable: 'jwtSecret')
 		    ])
 	        {
-		    sh "cp \$userSecret ./src/main/resources/application-secret.yml"
+		    sh "cp \$jwtSecret ./src/main/resources/application-secret.yml"
 		}	    
   	    }
 	}
@@ -22,7 +22,7 @@ pipeline {
                     sh '''
                         pwd
                         chmod +x ./gradlew
-                        ./gradlew build -x test
+                        ./gradlew build
                     '''
                     
                 }
@@ -41,7 +41,7 @@ pipeline {
         }
         stage('Deploy'){
             steps{
-                sh 'docker run --restart=always --network spharos-network -e EUREKA_URL="{EUREKA_URL}" -d --name user-service user-service-img'
+                sh 'docker run --network spharos-network -e EUREKA_URL="{EUREKA_URL}" -d --name user-service user-service-img'
             }
         }
     }

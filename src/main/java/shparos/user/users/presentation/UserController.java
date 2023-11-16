@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import shparos.user.global.common.response.BaseResponse;
 import shparos.user.users.application.UserService;
+import shparos.user.users.dto.UserPasswordChangeDto;
 import shparos.user.users.vo.*;
 
 
@@ -118,7 +119,13 @@ public class UserController {
             tags = { "User ChangePassword" })
     @PutMapping("/password")
     public BaseResponse<?> changePassword(@RequestBody UserChangePasswordRequest userChangePasswordRequest) {
-        userService.modifyPassword(userChangePasswordRequest);
+
+        // 비밀번호 변경
+        UserPasswordChangeDto dto = UserPasswordChangeDto.builder()
+                .email(userChangePasswordRequest.getEmail())
+                .password(userChangePasswordRequest.getPassword())
+                .build();
+        userService.modifyPassword(dto);
         return new BaseResponse<>();
     }
 
