@@ -1,6 +1,7 @@
 package spharos.user.address.application;
 
 import spharos.user.address.dto.AddressRegisterResultDto;
+import spharos.user.address.vo.AddressDetailResponse;
 import spharos.user.users.domain.User;
 import spharos.user.address.dto.AddressModifyDto;
 import spharos.user.address.dto.AddressRegisterDto;
@@ -13,6 +14,9 @@ public interface AddressService {
 
     // 주소리스트 조회
     List<AddressResponse> getAddressList(User user);
+
+    // 상세 주소 조회(수정페이지표시용)
+    AddressDetailResponse getAddressDetail(Long addressId);
 
     // 주소등록
     AddressRegisterResultDto registerAddress(AddressRegisterDto addressRegisterDto);

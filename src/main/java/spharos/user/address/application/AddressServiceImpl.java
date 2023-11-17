@@ -8,6 +8,7 @@ import spharos.user.address.domain.Address;
 import spharos.user.address.domain.UserAddressList;
 import spharos.user.address.dto.AddressRegisterResultDto;
 import spharos.user.address.infrastructure.UserAddressListRepository;
+import spharos.user.address.vo.AddressDetailResponse;
 import spharos.user.global.common.response.ResponseCode;
 import spharos.user.users.domain.User;
 import spharos.user.address.dto.AddressModifyDto;
@@ -54,6 +55,20 @@ public class AddressServiceImpl implements AddressService {
         }
 
     return responseList;
+    }
+
+    // 상세 주소 조회(수정페이지표시용)
+    @Override
+    public AddressDetailResponse getAddressDetail(Long addressId) {
+
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new CustomException(ResponseCode.CANNOT_FIND_ADDRESS));
+
+        return AddressDetailResponse.builder()
+                .id(address.getId())
+                .localAddress(address.getLocalAddress())
+                .extraAddress(address.getExtraAddress())
+                .build();
     }
 
     // 주소등록
