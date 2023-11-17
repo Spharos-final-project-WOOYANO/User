@@ -5,15 +5,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import spharos.user.address.application.AddressService;
+import spharos.user.address.vo.*;
 import spharos.user.global.common.response.BaseResponse;
 import spharos.user.users.application.UserService;
 import spharos.user.users.domain.User;
 import spharos.user.address.dto.AddressModifyDto;
 import spharos.user.address.dto.AddressRegisterDto;
-import spharos.user.address.vo.AddressDefaultResponse;
-import spharos.user.address.vo.AddressModifyRequest;
-import spharos.user.address.vo.AddressResponse;
-import spharos.user.address.vo.AddressRegisterRequest;
 
 import java.util.List;
 
@@ -39,6 +36,20 @@ public class AddressController {
         // 주소 리스트 조회
         List<AddressResponse> addressResponseList = addressService.getAddressList(user);
         return new BaseResponse<>(addressResponseList);
+    }
+
+    /*
+        상세 주소 조회(수정페이지표시용)
+     */
+    @Operation(summary = "상세 주소 조회(수정페이지표시용)",
+            description = "상세 주소 조회(수정페이지표시용)",
+            tags = { "Address" })
+    @GetMapping("/address/{addressId}")
+    public BaseResponse<?> getAddressDetail(@PathVariable("addressId") Long addressId) {
+
+        // 상세 주소 조회(수정페이지표시용)
+        AddressDetailResponse response = addressService.getAddressDetail(addressId);
+        return new BaseResponse<>(response);
     }
 
     /*
