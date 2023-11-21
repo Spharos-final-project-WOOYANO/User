@@ -13,5 +13,8 @@ public class UserLoginResponse {
 
     private String token;
     private String email;
+    private String username;
+    private String address;
+    private String profileImageUrl;
 
 }

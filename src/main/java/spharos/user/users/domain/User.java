@@ -29,6 +29,8 @@ public class User extends BaseEntity implements UserDetails  {
     private String nickname;
     @Column(nullable = false, length = 11, name = "phone")
     private String phone;
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
     @Column(nullable = false, name = "status", columnDefinition = "tinyint default 0")
     private Integer status;
 
