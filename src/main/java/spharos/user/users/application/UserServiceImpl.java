@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spharos.user.address.application.AddressService;
 import spharos.user.address.dto.AddressRegisterDto;
 import spharos.user.address.dto.AddressRegisterResultDto;
+import spharos.user.address.vo.AddressDefaultResponse;
 import spharos.user.global.common.response.ResponseCode;
 import spharos.user.users.domain.User;
 import spharos.user.global.config.security.JwtTokenProvider;
@@ -127,9 +128,15 @@ public class UserServiceImpl implements UserService {
         // 리프레시 토큰 발급 TODO
 //        String refreshToken = jwtTokenProvider.generateRefreshToken(user);
 
+        // 대표주소 조회
+        AddressDefaultResponse defaultAddress = addressService.getDefaultAddress(user);
+
         return UserLoginResponse.builder()
                 .token(accessToken)
                 .email(user.getEmail())
+                .username(user.getName())
+                .address(defaultAddress.getLocalAddress() + " " + defaultAddress.getExtraAddress())
+                .profileImageUrl(user.getProfileImageUrl())
                 .build();
     }
 
