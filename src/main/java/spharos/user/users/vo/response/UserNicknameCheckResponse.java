@@ -1,4 +1,4 @@
-package spharos.user.users.vo;
+package spharos.user.users.vo.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEmailCheckResponse {
+public class UserNicknameCheckResponse {
 
     private Boolean checkResult;
 

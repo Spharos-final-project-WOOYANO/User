@@ -1,4 +1,4 @@
-package spharos.user.users.vo;
+package spharos.user.users.vo.request;
 
 import lombok.Getter;
 

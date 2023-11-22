@@ -10,7 +10,13 @@ import spharos.user.users.dto.UserModifyDto;
 import spharos.user.users.dto.UserPasswordChangeDto;
 import spharos.user.users.dto.UserPasswordCheckDto;
 import spharos.user.users.dto.UserWithdrawCheckDto;
-import spharos.user.users.vo.*;
+import spharos.user.users.vo.request.UserInformationModifyRequest;
+import spharos.user.users.vo.request.UserMypageChangePasswordRequest;
+import spharos.user.users.vo.request.UserPasswordCheckRequest;
+import spharos.user.users.vo.request.UserWithdrawCheckRequest;
+import spharos.user.users.vo.response.UserInformationResponse;
+import spharos.user.users.vo.response.UserPasswordCheckResponse;
+import spharos.user.users.vo.response.UserWithdrawCheckResponse;
 
 @Slf4j
 @RequiredArgsConstructor
