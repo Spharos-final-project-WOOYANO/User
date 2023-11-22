@@ -1,20 +1,17 @@
-package spharos.user.users.vo;
+package spharos.user.users.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserLoginResponse {
+@Builder
+@Getter
+public class ReviewWriterDto {
 
-    private String token;
     private String email;
-    private String username;
-    private String address;
+    private String nickName;
     private String profileImageUrl;
-
 }

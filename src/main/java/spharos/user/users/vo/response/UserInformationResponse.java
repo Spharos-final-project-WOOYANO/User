@@ -1,4 +1,4 @@
-package spharos.user.users.vo;
+package spharos.user.users.vo.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,13 +9,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserSignUpResponse {
+public class UserInformationResponse {
 
     private String email;
     private String username;
+    private String birthday;
     private String nickname;
     private String phone;
-    private String localAddress;
-    private String extraAddress;
 
 }

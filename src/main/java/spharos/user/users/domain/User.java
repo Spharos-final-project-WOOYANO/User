@@ -35,7 +35,7 @@ public class User extends BaseEntity implements UserDetails  {
     private Integer status;
 
     private User(String email, String password, String birthday, String username, String nickname,
-                 String phone, Integer status) {
+                    String phone, Integer status) {
         this.email = email;
         this.password = password;
         this.birthday = birthday;

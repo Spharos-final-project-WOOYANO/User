@@ -1,4 +1,4 @@
-package spharos.user.users.vo;
+package spharos.user.users.vo.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserFindEmailResponse {
+public class UserLoginResponse {
 
+    private String token;
     private String email;
+    private String username;
+    private String address;
+    private String profileImageUrl;
 
 }
