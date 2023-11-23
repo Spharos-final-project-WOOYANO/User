@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class ReviewWriterDto {
 
     private String email;
-    private String nickName;
-    private String profileImageUrl;
+    private String ImgUrl;
+    private String nickname;
 }

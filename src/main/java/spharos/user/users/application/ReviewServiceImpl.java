@@ -3,13 +3,11 @@ package spharos.user.users.application;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import spharos.user.global.common.response.ResponseCode;
-import spharos.user.global.exception.CustomException;
 import spharos.user.users.domain.User;
 import spharos.user.users.dto.ReviewWriterDto;
 import spharos.user.users.infrastructure.UserRepository;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,23 +16,20 @@ public class ReviewServiceImpl implements ReviewService{
 
     private final UserRepository userRepository;
     @Override
-    public List<ReviewWriterDto> retrieveReviewWriter(List<String> userEmailList) {
+    public List<ReviewWriterDto> retrieveReviewWriter(List<String> userEmail) {
 
-        List<ReviewWriterDto> reviewWriterDtoList = new ArrayList<>();
+            List<User> users = userEmail.stream()
+                .map(userRepository::findByEmail)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
 
-        for (String email: userEmailList) {
-
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new CustomException(ResponseCode.CANNOT_FIND_USER));
-
-            ReviewWriterDto reviewWriterDto = ReviewWriterDto.builder()
-                    .email(user.getEmail())
-                    .nickName(user.getNickname())
-                    .profileImageUrl(user.getProfileImageUrl())
-                    .build();
-
-            reviewWriterDtoList.add(reviewWriterDto);
-        }
-        return reviewWriterDtoList;
+            return users.stream()
+                    .map(user -> ReviewWriterDto.builder()
+                            .email(user.getEmail())
+                            .nickname(user.getNickname())
+                            .ImgUrl(user.getProfileImageUrl())
+                            .build())
+                    .toList();
     }
 }
