@@ -39,6 +39,23 @@ public class AddressController {
     }
 
     /*
+        주소리스트 조회 - 업체검색용
+     */
+    @Operation(summary = "주소리스트 조회 - 업체검색용",
+            description = "주소리스트 조회 - 업체검색용",
+            tags = { "Address" })
+    @GetMapping("/address/list")
+    public BaseResponse<?> getAddressListForSearch(@RequestHeader("email") String email) {
+
+        // 이메일로 유저정보 찾기
+        User user = userService.getUserFromEmail(email);
+
+        // 주소 리스트 조회
+        List<AddressListForSearchResponse> addressResponseList = addressService.getAddressListForSearch(user);
+        return new BaseResponse<>(addressResponseList);
+    }
+
+    /*
         상세 주소 조회(수정페이지표시용)
      */
     @Operation(summary = "상세 주소 조회(수정페이지표시용)",
