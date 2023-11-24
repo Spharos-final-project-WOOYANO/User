@@ -9,6 +9,7 @@ import spharos.user.address.domain.UserAddressList;
 import spharos.user.address.dto.AddressRegisterResultDto;
 import spharos.user.address.infrastructure.UserAddressListRepository;
 import spharos.user.address.vo.AddressDetailResponse;
+import spharos.user.address.vo.AddressListForSearchResponse;
 import spharos.user.global.common.response.ResponseCode;
 import spharos.user.users.domain.User;
 import spharos.user.address.dto.AddressModifyDto;
@@ -54,7 +55,35 @@ public class AddressServiceImpl implements AddressService {
             responseList.add(addressResponse);
         }
 
-    return responseList;
+        return responseList;
+    }
+
+    // 주소리스트 조회 - 업체검색용
+    @Override
+    public List<AddressListForSearchResponse> getAddressListForSearch(User user) {
+
+        // 유저 주소 중간 테이블 조회
+        List<UserAddressList> userAddressList = userAddressListRepository.findByUser(user);
+
+        // 주소 정보가 없는 경우 null은 반환
+        if (userAddressList.isEmpty()) {
+            return null;
+        }
+
+        List<AddressListForSearchResponse> responseList = new ArrayList<>();
+
+        for(UserAddressList userAddress : userAddressList) {
+            AddressListForSearchResponse addressResponse = AddressListForSearchResponse.builder()
+                    .id(userAddress.getAddress().getId())
+                    .localAddress(userAddress.getAddress().getLocalAddress())
+                    .extraAddress(userAddress.getAddress().getExtraAddress())
+                    .defaultAddress(userAddress.getDefaultAddress())
+                    .localCode(userAddress.getAddress().getLocalCode())
+                    .build();
+            responseList.add(addressResponse);
+        }
+
+        return responseList;
     }
 
     // 상세 주소 조회(수정페이지표시용)
