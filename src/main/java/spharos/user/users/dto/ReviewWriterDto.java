@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ReviewWriterDto {
 
+    private Long userId;
     private String email;
     private String ImgUrl;
     private String nickname;
