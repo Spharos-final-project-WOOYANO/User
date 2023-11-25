@@ -27,6 +27,7 @@ public class ReviewServiceImpl implements ReviewService{
             return users.stream()
                     .map(user -> ReviewWriterDto.builder()
                             .email(user.getEmail())
+                            .userId(user.getId())
                             .nickname(user.getNickname())
                             .ImgUrl(user.getProfileImageUrl())
                             .build())
